@@ -1,6 +1,10 @@
 Revision history for Mojolicious-Plugin-HamlRenderer
 (formerly MojoX-Renderer-Haml)
 
+2.100000 2013-04-04 14:30:00Z
+
+    - Fix API usage for Mojolicious 4.91+.
+
 2.000001 2012-09-19 13:00:00Z
 
     [Documentation]

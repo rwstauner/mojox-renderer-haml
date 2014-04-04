@@ -1,5 +1,5 @@
 package MojoX::Renderer::Haml;
-our $VERSION = '2.000001';
+our $VERSION = '2.100000';
 
 use warnings;
 use strict;
@@ -29,18 +29,24 @@ EOF
 sub _render {
     my ($self, $r, $c, $output, $options) = @_;
 
+    # TODO: Handle $options->{inline} ?
+    my $name = $r->template_name($options);
+    return unless defined $name;
+
     my $path;
+    # FIXME: Does anything set this stash var?  Does it ever exist?
     unless ($path = $c->stash->{'template_path'}) {
         $path = $r->template_path($options);
     }
-    return unless defined $path;
 
     my $list = join ', ', sort keys %{$c->stash};
-    my $cache = b("$path($list)")->md5_sum->to_string;
+    # If this is a data template path may be blank but name should be what we want.
+    my $cache_key = $path || $name;
+    my $cache = b("$cache_key($list)")->md5_sum->to_string;
 
     $r->{_haml_cache} ||= {};
 
-    my $t = $r->template_name($options);
+    my $t = $name;
 
     my $haml = $r->{_haml_cache}->{$cache};
 
@@ -62,7 +68,7 @@ sub _render {
         $haml->helpers($r->helpers);
 
         # Try template
-        if (-r $path) {
+        if ($path && -r $path) {
             $c->app->log->debug("Rendering template '$t'.");
             $$output = $haml->render_file($path, %args);
         }
