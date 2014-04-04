@@ -34,7 +34,7 @@ sub _render {
     return unless defined $name;
 
     my $path;
-    # FIXME: Does anything set this stash var?  Does it ever exist?
+    # FIXME: SRI says this stash value used to exist loooooooooooong ago.
     unless ($path = $c->stash->{'template_path'}) {
         $path = $r->template_path($options);
     }
